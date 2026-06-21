@@ -1,127 +1,96 @@
-# Design Specification — Stripe
-Generated from: https://stripe.com/ | Date: 2024-06-21
+# Design Specification — GitHub
+Generated from: https://github.com | Date: 2026-06-21 (inferred from cachedAt)
 
 ## Brand Identity
-- **Tone:** Professional, Innovative, Authoritative, Empowering
-- **Personality:** Reliable, Modern, Efficient, Global
+- **Tone:** Professional, Innovative, Empowering
+- **Personality:** Collaborative, Forward-thinking, Reliable, Modern
 
 ## Color Palette
-| Role       | Hex       | Usage                                                              |
-|------------|-----------|--------------------------------------------------------------------|
-| Primary    | #031323   | Headings, main body text, primary button backgrounds               |
-| Secondary  | #F6F9FC   | Secondary button backgrounds, subtle section backgrounds           |
-| Accent     | #635BFF   | Links, interactive elements, subtle brand highlights               |
-| Surface    | #FFFFFF   | Main page background, card backgrounds                             |
-| Text       | #031323   | General body text, dark text on light backgrounds                  |
+| Role       | Hex     | Usage                                        |
+|------------|---------|----------------------------------------------|
+| Primary    | #1e2327 | Dark background (theme-color, dark mode)     |
+| Secondary  | #f2f2f2 | Light surface/background (light mode)        |
+| Accent 1   | #0067b8 | Primary interactive elements (buttons, links) |
+| Accent 2   | #d8b9ff | Highlight/glow, dark mode links/accents      |
+| Surface    | #ffffff | Default background, card backgrounds         |
+| Text       | #000000 | Primary text color (light mode)              |
+| Text (Dark)| #ffffff | Primary text color (dark mode)               |
+| Gray Text  | #666666 | Secondary text, captions                     |
 
 ## Typography
-- **Display:** Sohne (Sans-serif), Large, Bold/Extra Bold (e.g., `hds-heading--xl`)
-- **Heading:** Sohne (Sans-serif), Various sizes and weights (e.g., `hds-heading`, `h2`, `h3`)
-- **Body:** Sohne (Sans-serif), Regular weight, comfortable reading size
-- **Caption:** Source Code Pro (Monospace), Medium weight, smaller size (for code snippets, data, metadata)
+- **Display:** Mona Sans VF (Variable Font), large sizes (e.g., 24px+), semi-bold to bold. Used for main page titles.
+- **Heading:** Mona Sans VF (Variable Font) or "Segoe UI", SegoeUI, Arial, sans-serif; sizes like 18px, 20px, semi-bold (600). Used for section titles.
+- **Body:** Mona Sans VF (Variable Font) or "Segoe UI", SegoeUI, Arial, sans-serif; 15px, normal weight. Used for paragraph text and descriptions.
+- **Caption:** Mona Sans VF (Variable Font) or "Segoe UI", SegoeUI, Arial, sans-serif; 13px, normal weight. Used for small descriptive text, footnotes.
 
 ## Spacing & Layout
-- **Grid:** Multi-column grid system (implied by `hero-section__layout-grid` and various content blocks), likely responsive. Content is often centered within a max-width container.
-- **Section padding:** Generous vertical padding between sections (e.g., `section` class), likely consistent across the site to create breathing room. Horizontal padding ensures content doesn't touch edges.
-- **Border radius:** Small to medium border-radius on interactive elements like buttons (e.g., `hds-button`), input fields, and image containers, giving a soft, modern feel.
+- **Grid:** Implied responsive grid for feature sections and customer stories (e.g., 3-column layout on desktop, stacking on mobile). Content appears to be centered within a max-width container.
+- **Section padding:** Responsive padding, often `tmp-px-3` (small), `tmp-px-md-4` (medium), `tmp-px-lg-5` (large) horizontally. Vertical padding varies, e.g., `py-3` for header, `margin-top: 8%` for modals.
+- **Border radius:** Subtle rounding for most interactive elements and containers (e.g., `rounded`, `rounded-2`). Circular for radio buttons (`border-radius: 50%`).
 
 ## Component Inventory
 ### Navigation
-- **Layout:** Fixed top navigation bar with Stripe logo on the left, main menu items (Products, Solutions, Developers, Resources, Pricing) in the center, and action buttons (Sign in, Contact sales) on the right.
-- **Style:** Clean, minimalist, with subtle hover effects on menu items. Hamburger menu for mobile.
-- **Elements:** Stripe logo (SVG), text links, primary and secondary buttons.
+- **Header:** Fixed at top, contains GitHub logo (Octocat), a mobile toggle button, and "Sign in" link.
+- **Global Navigation:** (Inferred from `MarketingNavigation-module__nav__W0KYY`) Likely includes dropdowns for "Platform", "Solutions", "Open Source", "Pricing", etc.
 
 ### Hero
-- **Layout:** Full-width section with a large, impactful headline, a descriptive sub-headline, and two prominent call-to-action buttons. Features an animated background (wave graphic) and a dynamic "Global GDP running on Stripe" metric.
-- **Style:** High contrast with dark text on a light background, visually engaging background animation.
-- **Elements:** `<h1>` title, descriptive text, primary button ("Get started"), secondary button ("Sign up with Google"), animated metric display.
+- **Layout:** Large heading, descriptive paragraph, email input field, "Sign up for GitHub" primary button, and "Try GitHub Copilot" secondary link. Features a prominent illustrative image (Mona the Octocat, Copilot, Ducky with a purple glow).
 
-### Logo Carousel
-- **Layout:** Horizontal scrolling marquee of prominent customer logos.
-- **Style:** Subtle, continuous animation, with logos in a neutral color (e.g., black or dark grey).
-- **Elements:** List of `<a>` tags containing SVG logos.
+### Feature Section (GitHub features)
+- **Layout:** Section title, a demonstration animation (video), and a tabbed interface (Code, Plan, Collaborate, Automate, Secure). Each tab reveals a description related to the feature.
 
-### Feature Grid/Cards
-- **Layout:** Sections presenting multiple product features or solutions, often in a grid of 2-3 columns. Each item typically includes an `<h3>` title, a short description, and a relevant image or interactive demo.
-- **Style:** Clean, card-like presentation for individual features, often with distinct background imagery or illustrations.
-- **Elements:** `<h3>` titles, paragraphs, images, sometimes interactive UI elements (e.g., payment forms, dashboards).
+### Customer Logos
+- **Layout:** A horizontal display of prominent customer logos, likely a scrolling or responsive grid.
 
-### Stats/Metrics Section
-- **Layout:** A section dedicated to displaying key performance indicators or impressive statistics, often presented in a grid of large numbers with accompanying descriptions and icons/illustrations.
-- **Style:** Bold numbers, clear descriptions, often with illustrative graphics.
-- **Elements:** Large numerical values, short descriptive text, small icons/images.
+### AI Partner/Copilot Section
+- **Layout:** Heading, descriptive text, an image demonstrating Copilot, and an "Explore GitHub Copilot" call-to-action link.
 
-### Customer Stories/Accordions
-- **Layout:** A section showcasing customer success stories, sometimes presented as an accordion or a grid of clickable cards. Each item includes a customer logo/image, a brief highlight, and a link to the full story.
-- **Style:** Visually distinct blocks for each customer, often with a unique image treatment (e.g., the parallelogram shape in the Hertz/URBN examples).
-- **Elements:** Images, `<h3>` titles, short descriptions, "Read the story" links.
+### Customer Story/Report Cards
+- **Layout:** Smaller cards featuring a company logo, a headline summarizing a benefit, and a "Read customer story" or "Read industry report" link.
 
-### Service Offerings
-- **Layout:** A section detailing professional services, presented as a list of distinct blocks, each with a title, description, and a call-to-action link.
-- **Style:** Simple, direct, text-focused blocks.
-- **Elements:** `<h4>` titles, paragraphs, "View services/partners/plans" links.
+### Feature Blocks (e.g., Automate, Code Instantly, Keep Momentum, Shape Toolchain)
+- **Layout:** Each block consists of a sub-heading, a descriptive paragraph, and an "Explore [Feature]" call-to-action link. Often accompanied by a relevant image or illustration.
 
-### Testimonials
-- **Layout:** A section featuring quotes from key individuals at customer companies, often accompanied by a headshot and a link to the full story.
-- **Style:** Clean, focused on the quote and speaker, with small circular headshots.
-- **Elements:** Quote text, speaker name and title, headshot image, "Read the story" link.
+### Security Section
+- **Layout:** Similar to feature blocks, but focused on security aspects (Autofix, Code Security, Dependabot, Secret Protection). Includes statistics (e.g., "70% MTTR reduction") with footnotes. Each sub-section has a heading, description, image, and "Learn about..." link.
 
-### Developer Infrastructure Section
-- **Layout:** A section highlighting Stripe's developer-friendly aspects, including integration options, API performance, and support resources. Often includes code snippets, diagrams, and interactive elements.
-- **Style:** Technical, clear, with emphasis on code examples and data.
-- **Elements:** `<h3>` titles, descriptive text, code blocks, diagrams, buttons to documentation.
+### Testimonial
+- **Layout:** A blockquote with a customer quote, followed by the customer's name and title/company.
 
-### News/Blog Carousel
-- **Layout:** A horizontal carousel displaying recent articles, announcements, or reports. Each item includes an image, a headline, and a "Read more" link.
-- **Style:** Card-like items within a carousel, allowing users to browse multiple content pieces.
-- **Elements:** Images, headlines, descriptive text, "Read the [item]" links.
+### Customer Stories Grid
+- **Layout:** A grid of customer stories, each with a background image, company logo, industry tag, a headline, and a "Read customer story" link. Filterable by industry, size, use case.
 
-### Content Block (Book of the Week)
-- **Layout:** A dedicated section for a featured content piece, including an image, title, author, and a detailed description.
-- **Style:** Editorial feel, with a clear visual hierarchy.
-- **Elements:** Image, `<h4>` title, author name, paragraph description, links to external content.
+### Bottom Call to Action
+- **Layout:** Similar to the Hero section, with a large heading, descriptive text, email input, "Sign up for GitHub" primary button, and "Try GitHub Copilot" secondary link. Features a subtle background illustration.
 
-### Final Call to Action
-- **Layout:** A prominent section at the bottom of the page, encouraging users to take action, with two main buttons and supporting information.
-- **Style:** Clear, concise, with strong calls to action.
-- **Elements:** Headline, descriptive text, primary button ("Start now"), secondary button ("Contact sales"), supporting links ("Pricing details", "Integration options").
+### Footnotes
+- **Layout:** Small text section at the bottom, providing references for statistics.
+
+### Back to Top
+- **Layout:** A simple link to return to the top of the page.
+
+### Alerts
+- **Layout:** Dismissible alert banners for session-related messages (e.g., "You signed in with another tab or window.").
 
 ## Interaction Patterns
-- **Button Hover States:** Primary buttons likely show a subtle background change or arrow animation on hover. Secondary buttons might show a border or text color change.
-- **Navigation Dropdowns:** Menu items like "Products", "Solutions", "Developers", "Resources" likely trigger dropdown menus on hover or click, indicated by chevron icons.
-- **Number Animation:** The "Global GDP running on Stripe" metric features a dynamic, animated update of its numerical value.
-- **Carousel Navigation:** Carousels (Logo, News) likely have left/right navigation controls or auto-scroll functionality.
-- **Link Hover States:** Text links change color or underline on hover.
+- **Button Hover/Focus:** Buttons change background color, may gain a box-shadow on hover, and a distinct border on focus. Disabled buttons have reduced opacity and altered colors.
+- **Link Hover/Focus:** Links are underlined. Radio buttons show a filled circle on hover and focus, with a border change.
+- **Mobile Navigation:** A hamburger menu icon toggles the visibility of the navigation menu on smaller screens.
+- **Scroll Transitions:** `data-scroll-watcher="true"` suggests elements may animate or change visibility based on scroll position.
+- **Progress Bar:** A `turbo-progress-bar` indicates a loading state at the top of the page during navigation.
 
 ## Page Structure
-1.  Navigation
-2.  Hero Section (with Global GDP metric)
-3.  Logo Carousel (Customer Logos)
-4.  Flexible Solutions for Every Business Model (Feature Grid)
-    *   Accept and optimize payments globally
-    *   Enable any billing model
-    *   Monetize through agentic commerce
-    *   Create a card issuing program
-    *   Access borderless money movement with stablecoins and crypto
-    *   Embed payments in your platform
-5.  Building the economic infrastructure for AI (Callout)
-6.  The Backbone of Global Commerce (Stats/Metrics)
-7.  Powering Businesses of All Sizes (Customer Stories/Accordions)
-    *   Hertz
-    *   URBN
-    *   Instacart
-    *   Le Monde
-8.  Professional Services Offerings (Professional services, Stripe-certified experts, Support plans)
-9.  More Customer Stories (Bulleted list of customer highlights)
-10. Stripe Startups Program & Stripe Atlas (Promotional Blocks)
-11. Platform Embeddable Components (Interactive dashboard examples)
-12. Platform Feature Highlights (Get to market faster, Grow new lines of revenue, Manage platform risk)
-13. Testimonials (Mindbody, Jobber, Substack, Lightspeed)
-14. Reliable, Extensible Infrastructure for Every Stack (Developer-focused section)
-15. Latest Happenings (News/Blog Carousel)
-16. Book of the Week (Content Block)
-17. Ready to Get Started? (Final Call to Action)
-## Recreate Prompt
-> Build a website matching the above design specification.
-> Use the Brand Identity, Color Palette, and Typography details strictly.
-> Ensure the layout follows the Component Inventory and Page Structure.
+1.  Header (Navigation)
+2.  Hero Section
+3.  GitHub Features Section
+4.  GitHub Customers (Logo Grid)
+5.  AI Partner/Copilot Section
+6.  Customer Story/Report Cards (Duolingo, Gartner)
+7.  Feature Blocks (Automate, Code Instantly, Keep Momentum, Shape Toolchain)
+8.  Security Section (Autofix, Code Security, Dependabot, Secret Protection)
+9.  Testimonial (Mercedes-Benz)
+10. Collaboration Feature Blocks (Keep track, Share ideas, Review code, Fund open source)
+11. Customer Stories Grid (By industry, size, use case)
+12. Bottom Call to Action
+13. Footnotes
+14. Back to Top Link

@@ -46,13 +46,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "string",
               description: "The URL of the website to clone/analyze.",
             },
+            user_id: {
+              type: "string",
+              description: "The unique user_id/project_id to store this under in Parcle.",
+            },
             includePrompt: {
               type: "boolean",
               description: "Whether to include a 'Recreate Prompt' at the end of the specification.",
               default: false
             }
           },
-          required: ["url"],
+          required: ["url", "user_id"],
         },
       },
     ],
@@ -61,7 +65,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === "clone_website") {
-    const { url, includePrompt = false } = request.params.arguments as any;
+    const { url, user_id, includePrompt = false } = request.params.arguments as any;
 
     try {
       console.error(`[MCP] Starting clone_website for ${url}...`);
@@ -90,7 +94,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            user_id: "default_mcp_user",
+            user_id: user_id,
             design_markdown: finalContent
           })
         });
