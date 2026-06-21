@@ -10,7 +10,9 @@ Extract and analyze the following information:
 6. **Interaction Patterns**: Describe any apparent hover states, focus states, or scroll transitions.
 7. **Page Structure**: Provide an ordered list of the main sections on the page.
 
-Your output must be in Markdown format, following exactly the structure below:
+Your output must be in Markdown format, following exactly the structure below.
+
+If a FEATURE REQUEST CONTEXT is provided, treat it as user requirements. Ensure the generated design specification preserves the reference website's design language while supporting the requested functionality. Modify or add components, sections, and interactions as needed to fulfill the feature request.
 
 ```markdown
 # Design Specification — [Site Name]

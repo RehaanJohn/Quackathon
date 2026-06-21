@@ -9,6 +9,7 @@ import * as path from 'path';
 import { scrapeUrl } from './scraper';
 import { analyzeContent } from './analyzer';
 import { generateDesignSpec } from './generator';
+import { getFeedbackContext } from './produck';
 
 // Load environment variables from .env if present
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -55,6 +56,29 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["url"],
         },
       },
+      {
+        name: "clone_website_from_feedback",
+        description: "Fetch Produck feedback, scrape a website, and generate a design spec influenced by the feedback.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            feedbackId: {
+              type: "string",
+              description: "The Produck feedback ID to retrieve feature request context from.",
+            },
+            url: {
+              type: "string",
+              description: "The URL of the website to clone/analyze.",
+            },
+            includePrompt: {
+              type: "boolean",
+              description: "Whether to include a 'Recreate Prompt' at the end of the specification.",
+              default: false
+            }
+          },
+          required: ["feedbackId", "url"],
+        },
+      },
     ],
   };
 });
@@ -96,6 +120,50 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           {
             type: "text",
             text: `Failed to clone website: ${error.message}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  } else if (request.params.name === "clone_website_from_feedback") {
+    const { feedbackId, url, includePrompt = false } = request.params.arguments as any;
+
+    try {
+      console.error(`[MCP] Starting clone_website_from_feedback for feedback ID ${feedbackId} and URL ${url}...`);
+      
+      // 1. Fetch Feedback
+      const feedbackContext = await getFeedbackContext(feedbackId);
+
+      // 2. Scrape
+      const scrapedData = await scrapeUrl(url, firecrawlKey);
+
+      // 3. Analyze with feedback context
+      const analysisMarkdown = await analyzeContent(scrapedData, geminiKey, feedbackContext);
+
+      // 4. Format Final Content
+      let finalContent = analysisMarkdown;
+      if (includePrompt) {
+        const recreatePrompt = `\n## Recreate Prompt\n> Build a website matching the above design specification.\n> Use the Brand Identity, Color Palette, and Typography details strictly.\n> Ensure the layout follows the Component Inventory and Page Structure.\n`;
+        finalContent += recreatePrompt;
+      }
+
+      console.error(`[MCP] Successfully generated design spec for ${url} with feedback ${feedbackId}`);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: finalContent,
+          },
+        ],
+      };
+    } catch (error: any) {
+      console.error("[MCP] Error during clone_website_from_feedback:", error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to clone website from feedback: ${error.message}`,
           },
         ],
         isError: true,

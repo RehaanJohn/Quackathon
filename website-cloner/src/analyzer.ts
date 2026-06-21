@@ -2,15 +2,26 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ScrapeResult } from './scraper';
+import { FeedbackContext } from './produck';
 
-export async function analyzeContent(scrapeResult: ScrapeResult, apiKey: string): Promise<string> {
+export async function analyzeContent(scrapeResult: ScrapeResult, apiKey: string, feedbackContext?: FeedbackContext): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const systemPromptPath = path.join(__dirname, '../prompts/analyze.md');
   const systemPrompt = fs.readFileSync(systemPromptPath, 'utf-8');
 
   // We feed Gemini the scraped content and ask it to format it according to the system prompt
-  let userContent = "Here is the website content to analyze:\n\n";
+  let userContent = "";
+  if (feedbackContext) {
+    userContent += `FEATURE REQUEST CONTEXT\n\n`;
+    userContent += `Title:\n${feedbackContext.title}\n\n`;
+    userContent += `Description:\n${feedbackContext.description}\n\n`;
+    userContent += `Requirements:\n${feedbackContext.requirements}\n\n`;
+    userContent += `WEBSITE CONTENT\n\n`;
+  } else {
+    userContent += "Here is the website content to analyze:\n\n";
+  }
+  
   if (scrapeResult.metadata) {
     userContent += `METADATA:\n${JSON.stringify(scrapeResult.metadata, null, 2)}\n\n`;
   }
