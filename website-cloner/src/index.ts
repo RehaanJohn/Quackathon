@@ -81,6 +81,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       console.error(`[MCP] Successfully generated design spec for ${url}`);
 
+      // 4. Send to Parcle Backend
+      try {
+        console.error(`[MCP] Sending design spec to Parcle backend...`);
+        const response = await fetch("http://localhost:8000/ingest-design", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            user_id: "default_mcp_user",
+            design_markdown: finalContent
+          })
+        });
+        
+        if (!response.ok) {
+          const errText = await response.text();
+          console.error(`[MCP] Parcle ingestion failed: ${response.status} ${errText}`);
+        } else {
+          const responseData = await response.json();
+          console.error(`[MCP] Successfully ingested to Parcle:`, responseData);
+        }
+      } catch (parcleError) {
+        console.error(`[MCP] Error contacting Parcle backend:`, parcleError);
+        // Continue and return the content anyway
+      }
+
       return {
         content: [
           {
