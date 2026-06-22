@@ -2,6 +2,9 @@ export interface ScrapeResult {
   markdown?: string;
   html?: string;
   metadata?: any;
+  requestedUrl: string;
+  finalUrl?: string;
+  statusCode?: number;
 }
 
 export async function scrapeUrl(url: string, apiKey: string): Promise<ScrapeResult> {
@@ -33,6 +36,9 @@ export async function scrapeUrl(url: string, apiKey: string): Promise<ScrapeResu
   }
 
   return {
+    requestedUrl: url,
+    finalUrl: result.data.metadata?.sourceURL,
+    statusCode: result.data.metadata?.statusCode,
     markdown: result.data.markdown,
     html: result.data.rawHtml,
     metadata: result.data.metadata
