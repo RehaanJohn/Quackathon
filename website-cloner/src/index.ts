@@ -9,7 +9,55 @@ import * as path from 'path';
 import { scrapeUrl } from './scraper';
 import { analyzeContent } from './analyzer';
 import { generateDesignSpec } from './generator';
-import { getFeedbackContext } from './produck';
+import { validateScrapeResult, BlockedScrapeError } from './validator';
+import { saveBlockedAttempt } from './parcel';
+
+async function handleBlockedScrapeError(error: BlockedScrapeError, requestedUrl: string) {
+  try {
+    await saveBlockedAttempt({
+      url: requestedUrl,
+      reason: error.reason,
+      detectedIssue: error.detectedIssue,
+      requestedUrl: requestedUrl,
+      finalUrl: error.finalUrl || requestedUrl
+    });
+  } catch (err) {
+    console.warn("[Parcel] Failed to save blocked attempt:", err);
+  }
+
+  const jsonResponse = JSON.stringify({
+    success: false,
+    blocked: true,
+    reason: error.message,
+    detectedIssue: error.detectedIssue,
+    requestedUrl: requestedUrl,
+    finalUrl: error.finalUrl || requestedUrl
+  }, null, 2);
+
+  const userFacing = `❌ Unable to generate design blueprint.
+
+Reason:
+The target website redirected to an authentication, verification, or protected page.
+
+Detected Issue: ${error.detectedIssue}
+
+Requested URL: ${requestedUrl}
+
+Final URL: ${error.finalUrl || requestedUrl}
+
+Suggestions:
+* Use a publicly accessible website.
+* Use a landing page instead of a dashboard.
+* Avoid authenticated URLs.
+* Verify the page can be viewed without logging in.
+
+This blocked attempt has been recorded for debugging and future analysis.`;
+
+  return {
+    content: [{ type: "text", text: `${jsonResponse}\n\n${userFacing}` }],
+    isError: true
+  };
+}
 
 // Load environment variables from .env if present
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -62,13 +110,19 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            feedbackId: {
-              type: "string",
-              description: "The Produck feedback ID to retrieve feature request context from.",
-            },
             url: {
               type: "string",
               description: "The URL of the website to clone/analyze.",
+            },
+            feedbackContext: {
+              type: "object",
+              description: "The Produck feedback context object.",
+              properties: {
+                title: { type: "string" },
+                description: { type: "string" },
+                requirements: { type: "string" }
+              },
+              required: ["title", "description", "requirements"]
             },
             includePrompt: {
               type: "boolean",
@@ -76,7 +130,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               default: false
             }
           },
-          required: ["feedbackId", "url"],
+          required: ["url", "feedbackContext"],
         },
       },
     ],
@@ -92,6 +146,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       
       // 1. Scrape
       const scrapedData = await scrapeUrl(url, firecrawlKey);
+
+      // Validation
+      validateScrapeResult(scrapedData);
 
       // 2. Analyze
       const analysisMarkdown = await analyzeContent(scrapedData, geminiKey);
@@ -114,6 +171,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ],
       };
     } catch (error: any) {
+      if (error instanceof BlockedScrapeError) {
+        console.error("[MCP] Validation blocked scrape:", error.reason);
+        return await handleBlockedScrapeError(error, url);
+      }
       console.error("[MCP] Error during clone_website:", error);
       return {
         content: [
@@ -126,16 +187,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
   } else if (request.params.name === "clone_website_from_feedback") {
-    const { feedbackId, url, includePrompt = false } = request.params.arguments as any;
+    const { url, feedbackContext, includePrompt = false } = request.params.arguments as any;
 
     try {
-      console.error(`[MCP] Starting clone_website_from_feedback for feedback ID ${feedbackId} and URL ${url}...`);
+      console.error(`[MCP] Starting clone_website_from_feedback for URL ${url} with provided feedback context...`);
       
-      // 1. Fetch Feedback
-      const feedbackContext = await getFeedbackContext(feedbackId);
-
-      // 2. Scrape
+      // 1. Scrape
       const scrapedData = await scrapeUrl(url, firecrawlKey);
+
+      // 2. Validation
+      validateScrapeResult(scrapedData);
 
       // 3. Analyze with feedback context
       const analysisMarkdown = await analyzeContent(scrapedData, geminiKey, feedbackContext);
@@ -147,7 +208,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         finalContent += recreatePrompt;
       }
 
-      console.error(`[MCP] Successfully generated design spec for ${url} with feedback ${feedbackId}`);
+      console.error(`[MCP] Successfully generated design spec for ${url} with provided feedback`);
 
       return {
         content: [
@@ -158,6 +219,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ],
       };
     } catch (error: any) {
+      if (error instanceof BlockedScrapeError) {
+        console.error("[MCP] Validation blocked scrape from feedback:", error.reason);
+        return await handleBlockedScrapeError(error, url);
+      }
       console.error("[MCP] Error during clone_website_from_feedback:", error);
       return {
         content: [
