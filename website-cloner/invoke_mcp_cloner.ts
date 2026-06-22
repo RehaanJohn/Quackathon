@@ -23,10 +23,10 @@ async function run() {
     }
   );
 
-  console.log(`Connecting to local website-cloner MCP server...`);
+  console.log(`\x1b[95m[Website Cloner] Connecting to local MCP via stdio...\x1b[0m`);
   await client.connect(transport);
 
-  console.log(`\nCalling clone_website tool for ${url} (user_id: ${user_id})...`);
+  console.log(`\n\x1b[1m\x1b[95m[Website Cloner] Invoking 'clone_website' tool for ${url} (Project: ${user_id})\x1b[0m`);
   try {
     const result = await client.callTool({
       name: "clone_website",

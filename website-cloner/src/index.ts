@@ -68,7 +68,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { url, user_id, includePrompt = false } = request.params.arguments as any;
 
     try {
-      console.error(`[MCP] Starting clone_website for ${url}...`);
+      console.error(`\x1b[95m[Website Cloner] Executing MCP Tool 'clone_website' for ${url}...\x1b[0m`);
       
       // 1. Scrape
       const scrapedData = await scrapeUrl(url, firecrawlKey);
@@ -83,11 +83,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         finalContent += recreatePrompt;
       }
 
-      console.error(`[MCP] Successfully generated design spec for ${url}`);
+      console.error(`\x1b[92m[Website Cloner] Successfully generated design spec for ${url}\x1b[0m`);
 
       // 4. Send to Parcle Backend
       try {
-        console.error(`[MCP] Sending design spec to Parcle backend...`);
+        console.error(`\x1b[95m[Website Cloner] Pushing compiled design to Parcle Backend (/ingest-design)...\x1b[0m`);
         const response = await fetch("http://localhost:8000/ingest-design", {
           method: "POST",
           headers: {
